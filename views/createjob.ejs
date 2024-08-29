@@ -1,0 +1,38 @@
+<%- include("./layout/header") %>
+
+<main>
+    <div class="container">
+        <h1 class="text-muted">Post A Job</h1>
+    <form method="post" action="/jobs/createjob" >
+<div class="shadow p-3 mb-5 bg-body rounded" >
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingInput" name="title" placeholder="Designation">
+        <label for="floatingInput">Designation</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingPassword" name="companyName" placeholder="Company Name">
+        <label for="floatingPassword">Company Name</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingPassword" name="location" placeholder="Location">
+        <label for="floatingPassword">Location</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingPassword" name="description" placeholder="Description">
+        <label for="floatingPassword">Description</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="number" class="form-control" id="floatingPassword" name="salary" placeholder="Salary">
+        <label for="floatingPassword">Salary</label>
+      </div>
+      <div class="mb-3">
+        <button class="btn btn-primary" type="submit" >Submit Job</button>
+      </div>
+</div>
+      
+
+    </form>
+    </div>
+</main>
+
+<%- include("./layout/footer") %>
