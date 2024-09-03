@@ -10,6 +10,17 @@ app.use(express.json());
 
 app.use("/jobs", JobRoute);
 
+const  errorHandler = (err, req,res,next)=>{
+
+  if(res.hasdersSent){
+    return next(err);
+  }
+  res.status(500).json({error: err});
+
+}
+
+app.use(errorHandler);
+
 
 
 

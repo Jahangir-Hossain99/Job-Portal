@@ -28,7 +28,7 @@ const showUsers = async (req , res ) =>{
             const users = await User.find({})
             res.status(200).json(users)            
         } catch (error) {
-            res.status(500).json({message: error.message})
+            res.status(500).json({message: error.message + "error"})
         }
   };
 
@@ -194,37 +194,43 @@ const deleteUser = async (req,res)=>{
 
 //Login Controller
 
-  const login = async (req, res) => {
-            try {
-              const { email, password } = req.body;
+const login = async (req, res) => {
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email: req.body.email });
 
-              const user = await User.find( { email: email } );
-          
-              if (!user) {
-                return res.status(401).json({ message: 'Invalid username/email or password' });
-              }else{
-                const isMatch = await bcrypt.compare(password, user[0].password);
-              if (isMatch){
-                const token = jwt.sign({
-                   email: user[0].email,
-                   password:user[0].password
-                   }, process.env.JWT_Secret,{
-                    expiresIn:'1h'
-                   });
-                   res.setHeader('access_token',token);
-                   res.setHeader('userId',user[0]._id);
-                   //Work From here
-              }
-              
-              
+    if (!user) {
+      return res.status(401).json({   
+ message: 'Invalid username/email or password' });
+    }
 
-              }
+    // Validate password using bcrypt
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message:   
+ 'Invalid username/email or password' });
+    }
 
-            } catch (error) {
-              console.error(error);
-              res.status(500).json({ message: 'Internal server error' });
-            }
-          };
+    // Generate a JWT token
+    const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_Secret, {
+      expiresIn: '1h', // Set expiration time appropriately
+    });
+
+    res.status(200).json({
+      "access_token":token,
+      "message":"Login Successfully"
+    })
+   
+   
+
+    // Optionally, send a success response with limited user data
+    res.status(203).json()// Consider sending only necessary user info
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
   const signin = (req,res)=>{
     res.render('signin',{});

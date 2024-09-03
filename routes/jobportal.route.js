@@ -6,7 +6,7 @@ const {showUsers,createaccount, createUser, updateUser,singleUser, deleteUser,
         index
  } = require('../controllers/jobs.controller.js');
 
- const {validate}  = require('../middleware/validate.js');
+ const checklog  = require('../middleware/validate.js');
 
  const cookieParser = require('cookie-parser');
 
@@ -18,10 +18,11 @@ router.get("/", index);
 //User Routes
 
 router.get('/users', showUsers);
+
 router.get('/createaccount',createaccount);
 router.post('/register', createUser);
 router.put('/updateuser/:id', updateUser);
-router.get('/single/:id', singleUser);
+router.get('/single/',checklog, singleUser);
 router.delete('/delete/:id', deleteUser);
 
 // Job Route

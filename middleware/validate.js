@@ -2,19 +2,22 @@ const jwt = require("jsonwebtoken");
 
 
 const validateLogin = (req, res, next) => {
-    const { access_token } = req.headers;
+    const auth= req.headers['access_token'];
 
     try {
-      const token = access_token;
+      const token = auth;
       const decode = jwt.verify(token,process.env.JWT_Secret);
-      const {username, userId} = decode;
-      req.username = username;
-      req.userId = userId;
+      
+      const {email, id} = decode;
+    
+      req.email = email;
+      req.userId = id;
       next();
     } catch (error) {
+      console.log(error);
       next("Authentication Failure!");
     }
    
   };
 
-  module.exports = {validateLogin};
+  module.exports = validateLogin;
