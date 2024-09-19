@@ -1,12 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const JobRoute = require('./routes/jobportal.route');
 const app = express();
 
 app.set("view engine","ejs");
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false  }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/jobs", JobRoute);
 
@@ -19,7 +23,8 @@ const  errorHandler = (err, req,res,next)=>{
 
 }
 
-app.use(errorHandler);
+
+
 
 
 

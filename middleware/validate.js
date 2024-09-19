@@ -1,23 +1,40 @@
-const jwt = require("jsonwebtoken"); 
+const jwt = require('jsonwebtoken');
 
-
-const validateLogin = (req, res, next) => {
-    const auth= req.headers['access_token'];
-
-    try {
-      const token = auth;
-      const decode = jwt.verify(token,process.env.JWT_Secret);
+const authenticateToken = async(req, res, next) => {
+  try {
+    const token = req.cookies.Authorization;
+    if(!token){
+      res.redirect('/jobs/signin')
       
-      const {email, id} = decode;
-    
-      req.email = email;
-      req.userId = id;
-      next();
-    } catch (error) {
-      console.log(error);
-      next("Authentication Failure!");
     }
-   
-  };
+    const decoded = jwt.verify(token,process.env.JWT_Secret);
+    ;
+    if(!decoded){
+      res.status(500).json({ message: 'Please logged in first' });
+    }
 
-  module.exports = validateLogin;
+    
+     req.body.userId = decoded.id;
+    next();
+    
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const islogout = async(req,res,next)=>{
+  try {
+    const accessToken = req.cookies['Authorization'];
+   if(accessToken){
+    throw "Already looged out";
+   }else{
+    next();
+   }
+   
+    
+  } catch (error) {
+    return next(error);
+  }
+}
+
+module.exports = { authenticateToken , islogout  };

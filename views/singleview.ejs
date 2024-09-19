@@ -1,0 +1,62 @@
+<%- include("./layout/header") %>
+
+<main>
+    
+    <body >
+        <div class="container  p-4">
+            <div class="row "> 
+                <div class="col-md-4">
+                <div class="profile-image">
+                    <img src="https://picsum.photos/200/300" class="img-fluid rounded-circle" alt="Profile Picture">
+                </div>
+            </div>
+                <div class="col-md-4 ">
+                    <div class="card ">
+                        <div class="card-header">Personal Information</div>
+                        <div class="card-body">  
+    
+                            <p>Role: Employee</p>
+                            <p>Name: <%= user.name %></p>
+                            <p>Email: <%= user.email %></p>
+                            <p>Phone: 123-456-7890</p>
+                            <p>Address: 123 Main Street, City, State, ZIP</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8 ">
+                    <div class="card mt-3 mb-5">
+                        <div class="card-header">Educational Background</div>
+                        <div class="card-body">
+                            <ul>
+                                <li>
+                                    <h4>Degree Name</h4>
+                                    <p>University Name</p>
+                                    <p>Year Graduated</p>
+                                </li>
+                                </ul>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Work Experience</div>
+                        <div class="card-body">
+                            <ul>
+                                <li>
+                                    <h4>Job Title</h4>
+                                    <p>Company Name</p>
+                                    <p>Start Date - End Date</p>
+                                    <p>Responsibilities:</p>
+                                    <ul>
+                                        <li>Responsibility 1</li>
+                                        <li>Responsibility 2</li>
+                                        </ul>
+                                </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</main>
+
+<%- include("./layout/footer") %>

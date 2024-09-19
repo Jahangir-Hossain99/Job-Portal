@@ -55,9 +55,15 @@
                     </div>
                     <a href="" class="nav-item nav-link">Employeers</a>
                     <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    <% if(req.cookies.Authorization){ %>
                 <a href="/jobs/postajob" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Post A Job<i class="fa fa-arrow-right ms-1"></i></a>
+                <a href="/jobs/update/" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Update<i class="fa fa-arrow-right ms-1"></i></a>
+                <a href="/jobs/logout" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Log Out<i class="fa fa-arrow-right ms-1"></i></a>
+                <% }else{ %>
+                    <a href="/jobs/postajob" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Post A Job<i class="fa fa-arrow-right ms-1"></i></a>
                 <a href="/jobs/createaccount" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Create A Account<i class="fa fa-arrow-right ms-1"></i></a>
                 <a href="/jobs/signin" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Sign In<i class="fa fa-arrow-right ms-1"></i></a>
+                <% } %>
             </div>
         </nav>
 

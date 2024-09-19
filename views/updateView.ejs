@@ -1,0 +1,33 @@
+<%- include("./layout/header") %>
+
+<main>
+    <div class="container">
+        <h1 class="text-muted">Update Account of <%= user.name %></h1>
+        
+    <form method="post" action="/jobs/updateuser/ ">
+    
+<div class="shadow p-3 mb-5 bg-body rounded" >
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="floatingInput" name="name" value="<%= user.name %>" placeholder="User Name">
+        <label for="floatingInput">User Name</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="floatingPassword" name="email" value="<%= user.email %>" placeholder="Email">
+        <label for="floatingPassword">Email</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="floatingPassword" name="password"  placeholder="Password">
+        <label for="floatingPassword">Password</label>
+      </div>
+      
+      <div class="mb-3">
+        <button class="btn btn-primary" type="submit" >Submit</button>
+      </div>
+</div>
+      
+
+    </form>
+    </div>
+</main>
+
+<%- include("./layout/footer") %>

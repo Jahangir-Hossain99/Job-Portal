@@ -12,13 +12,13 @@ const validate = require('../middleware/validate.js');
 
 const index = (req,res)=>{
   
-  res.render("index",{});
+  res.render("index",{req});
 };
 
 // User Controller
 
 const  createaccount =(req,res)=>{
-  res.render('createuser',{});
+  res.render('createuser',{req});
 }
 
 
@@ -41,35 +41,48 @@ const createUser =  async (req,res)=>{
       const user = new User({ name, email, password: hashedPassword });
   
       await user.save();
-      res.redirect("/jobs/users");             
+      res.redirect("/jobs/jobs");             
     } catch (error) {
         res.status(500).json({message: error.message})
     }
 
   };
 
-  const updateUser =   async (req,res)=>{
-
+  const updateView = async(req,res)=>{
     try {
-        const { id } = req.params;
-        const user = await User.findByIdAndUpdate(id,req.body);
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-        const updateUser = await User.findById(id);
-        res.status(200).json(updateUser); 
-                   
+      const user = await User.findById(req.body.userId);
+             res.render('updateView', { user: user,req }); 
+      
     } catch (error) {
-        res.status(500).json({message: error.message})
+      return error;
     }
-   
+    
+  }
+
+  const updateUser = async (req, res) => {
+    try {
+        const userId = req.body.userId; 
+        const updatedData = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.render('singleview', {user: updatedUser,req });
+    } catch (error) {
+        res.status(500).json({ message: error.message  
+ });
+    }
 };
 
 const singleUser = async (req , res ) =>{
           try {
-            //const { id } = req.userId;
-            const user = await User.findById(req.userId)
-            res.status(200).json(user);            
+            
+             const user = await User.findById(req.body.userId);
+             
+                    res.render('singleview', { user: user,req });            
         } catch (error) {
             res.status(500).json({message: error.message})
         }
@@ -95,14 +108,14 @@ const deleteUser = async (req,res)=>{
 //Jobs Controller
 
     const postajob = (req,res)=>{
-  res.render('createjob',{});
+  res.render('createjob',{req});
 }
 
     const jobs = async (req , res ) =>{
                   try {
 
                     const jobs = await Job.find({})
-                    res.render('jobs', { jobs: jobs });
+                    res.render('jobs', { jobs: jobs,req });
                 } catch (error) {
                     res.status(500).json({message: error.message})
                 }
@@ -113,7 +126,7 @@ const deleteUser = async (req,res)=>{
                   try {
                       
                       const job = await Job.create(req.body)
-                      res.redirect("/jobs/jobs");          
+                      res.render('createjob',{req});        
                   } catch (error) {
                       res.status(500).json({message: error.message})
                   }
@@ -123,8 +136,9 @@ const deleteUser = async (req,res)=>{
     const singleJob =      async (req , res ) =>{
                   try {
                     const { id } = req.params;
-                    const user = await Job.findById(id)
-                    res.status(200).json(user);            
+                    const job = await Job.findById(id)
+                    const appliedJobs = null;
+                    res.render('jobdetails',{job:job, appliedJobs,req});              
                 } catch (error) {
                     res.status(500).json({message: error.message})
                 }
@@ -167,24 +181,29 @@ const deleteUser = async (req,res)=>{
 
   const applies = async (req, res) => {
               try {
-                const { jobId, applicantId, resume } = req.body;
+                
+                const applicantId = req.body.userId;
+                const jobId= req.params.id;
           
-                const job = await Job.findById(jobId);
-                const applicant = await User.findById(applicantId);
-
-                if (!job || !applicant) {
-                  return res.status(404).json({ message: "Job not found" });
+                const applications = await App.find({applicantId});
+                
+                let jobs = [];
+                for (let index = 0; index < applications.length; index++) {
+                  jobs = await Job.find({_id:applications[index].jobId});
+                  console.log(applications[index].jobId);
+                  console.log(jobs);
+                  
                 }
+                
 
               const application = new App({
                 jobId,
                 applicantId,
-                resume
-                
               }) 
 
               await application.save();
-              res.status(201).json(application);
+
+              res.render('appliedjobs',{ applications,jobs,req});  
               
               }catch (error) {
                 res.status(500).json({message: error.message})
@@ -196,44 +215,63 @@ const deleteUser = async (req,res)=>{
 
 const login = async (req, res) => {
   try {
-    // Find the user by email
-    const user = await User.findOne({ email: req.body.email });
+    // Destructure email and password from request body
+    const { email, password } = req.body;
 
-    if (!user) {
-      return res.status(401).json({   
- message: 'Invalid username/email or password' });
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
     }
 
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid  credentials' }); 
+    }
     // Validate password using bcrypt
-    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message:   
- 'Invalid username/email or password' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     // Generate a JWT token
-    const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_Secret, {
-      expiresIn: '1h', // Set expiration time appropriately
+    const token = jwt.sign({  
+ email: user.email, id: user._id }, process.env.JWT_SECRET,  
+ {
+      expiresIn: '1h', // Adjust expiration time based on requirements
     });
 
-    res.status(200).json({
-      "access_token":token,
-      "message":"Login Successfully"
-    })
+    // Set cookie with secure and HTTP-only flags
+    res.cookie('Authorization', token, {
+      maxAge: 3000000, // 50 minutes (adjust as needed)
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none', // May require additional server configuration for cross-site requests
+    });
+    res.redirect('/jobs/single');
    
-   
-
-    // Optionally, send a success response with limited user data
-    res.status(203).json()// Consider sending only necessary user info
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
-};
+}
+
+
+
+const logout = async(req,res)=>{
+  try {
+    res.clearCookie('Authorization');
+    res.redirect("/jobs/");  
+    
+  } catch (error) {
+    return error;
+  }
+}
 
   const signin = (req,res)=>{
-    res.render('signin',{});
+    res.render('signin',{req});
   }
 
 
@@ -249,6 +287,7 @@ const login = async (req, res) => {
     createaccount,
     createUser,
     updateUser,
+    updateView,
     singleUser,
     deleteUser,
 
@@ -262,6 +301,7 @@ const login = async (req, res) => {
     applies,
 
     login,
-    signin
+    signin,
+    logout
 
   }
