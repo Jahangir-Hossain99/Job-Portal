@@ -59,11 +59,7 @@ const AppSchema = mongoose.Schema({
         type:String,
         required: false
     },
-    appliedAt:{
-        type:Date,
-        default:Date.now
-    }
-
+ 
 });
 
 const User = mongoose.model("User", UserSchema);

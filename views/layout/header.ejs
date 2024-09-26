@@ -48,14 +48,14 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto p-4 p-lg-0">
                     <a href="/jobs" class="nav-item nav-link active">Home</a>
-                    <a href="about.html" class="nav-item nav-link">About</a>
-                    <a href="/jobs/jobs" class="nav-item nav-link">Jobs</a>
-                    </div>
-                  
-                    </div>
-                    <a href="" class="nav-item nav-link">Employeers</a>
-                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+                </div>
+                    
                     <% if(req.cookies.Authorization){ %>
+                        <a href="/jobs/jobs" class="nav-item nav-link">Jobs</a>
+                        <a href="/jobs/appliedJobs" class="nav-item nav-link text-center">Applied Jobs</a>                    
+                        <a href="" class="nav-item nav-link">Employeers</a>
+                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                </div>   
                 <a href="/jobs/postajob" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Post A Job<i class="fa fa-arrow-right ms-1"></i></a>
                 <a href="/jobs/update/" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Update<i class="fa fa-arrow-right ms-1"></i></a>
                 <a href="/jobs/logout" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Log Out<i class="fa fa-arrow-right ms-1"></i></a>

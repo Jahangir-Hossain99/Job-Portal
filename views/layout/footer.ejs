@@ -79,7 +79,16 @@
 <script src="lib/owlcarousel/owl.carousel.min.js"></script>
 
 <!-- Template Javascript -->
-<script src="js/main.js"></script>
+<script >
+    window.onload = function() {
+                    const messageElement = document.getElementById('alert');
+                    if (messageElement) {
+                        setTimeout(() => {
+                            messageElement.style.display = 'none';
+                        }, 3000); // Hide after 3 seconds
+                    }
+                };
+</script>
 </body>
 
 </html>

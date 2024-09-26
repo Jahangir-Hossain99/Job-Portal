@@ -10,99 +10,11 @@ const validate = require('../middleware/validate.js');
 
 //Home Controller
 
-const index = (req,res)=>{
-  
-  res.render("index",{req});
+const index =async (req,res)=>{
+  const jobs = await Job.find({})
+  res.render("index",{jobs,req});
 };
 
-// User Controller
-
-const  createaccount =(req,res)=>{
-  res.render('createuser',{req});
-}
-
-
-const showUsers = async (req , res ) =>{
-          try {
-
-            const users = await User.find({})
-            res.status(200).json(users)            
-        } catch (error) {
-            res.status(500).json({message: error.message + "error"})
-        }
-  };
-
-const createUser =  async (req,res)=>{
-
-    try {
-      const { name, email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      const user = new User({ name, email, password: hashedPassword });
-  
-      await user.save();
-      res.redirect("/jobs/jobs");             
-    } catch (error) {
-        res.status(500).json({message: error.message})
-    }
-
-  };
-
-  const updateView = async(req,res)=>{
-    try {
-      const user = await User.findById(req.body.userId);
-             res.render('updateView', { user: user,req }); 
-      
-    } catch (error) {
-      return error;
-    }
-    
-  }
-
-  const updateUser = async (req, res) => {
-    try {
-        const userId = req.body.userId; 
-        const updatedData = req.body;
-
-        const updatedUser = await User.findByIdAndUpdate(userId, updatedData, { new: true });
-
-        if (!updatedUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        res.render('singleview', {user: updatedUser,req });
-    } catch (error) {
-        res.status(500).json({ message: error.message  
- });
-    }
-};
-
-const singleUser = async (req , res ) =>{
-          try {
-            
-             const user = await User.findById(req.body.userId);
-             
-                    res.render('singleview', { user: user,req });            
-        } catch (error) {
-            res.status(500).json({message: error.message})
-        }
-      };
-
-const deleteUser = async (req,res)=>{
-
-        try {
-            const { id } = req.params;
-            const user = await User.findByIdAndDelete(id);
-            if (!user) {
-              return res.status(404).json({ message: "User not found" });
-            }
-            res.status(200).json({message:"deleted successfully"}); 
-                       
-        } catch (error) {
-            res.status(500).json({message: error.message})
-        }
-       
-    };
 
 
 //Jobs Controller
@@ -185,30 +97,37 @@ const deleteUser = async (req,res)=>{
                 const applicantId = req.body.userId;
                 const jobId= req.params.id;
           
-                const applications = await App.find({applicantId});
-                
-                let jobs = [];
-                for (let index = 0; index < applications.length; index++) {
-                  jobs = await Job.find({_id:applications[index].jobId});
-                  console.log(applications[index].jobId);
-                  console.log(jobs);
-                  
+                const appliedJob = await App.findOne({ applicantId, jobId });
+                if (appliedJob) {
+                  return res.status(400).json({ message: 'You have already applied for this job.' });
                 }
-                
 
-              const application = new App({
-                jobId,
-                applicantId,
-              }) 
+                const newAppliedJob = new App({ applicantId, jobId });
+                await newAppliedJob.save();
 
-              await application.save();
-
-              res.render('appliedjobs',{ applications,jobs,req});  
-              
+                const jobs = await Job.find({})
+                    res.render('jobs', { jobs: jobs,req });
+            
               }catch (error) {
                 res.status(500).json({message: error.message})
             }
             };
+
+      const appliedJobs= async (req, res)=>{
+        try {
+          const applicantId = req.body.userId;
+          if (!applicantId || !User.findById(applicantId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+          }
+          const appliedJobs = await App.find({ applicantId }).populate('jobId');
+          
+          console.log(appliedJobs);
+          res.render('appliedjobs',{ appliedJobs:appliedJobs,req}); 
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: 'Internal server error' });
+        }
+      }      
 
 
 //Login Controller
@@ -250,6 +169,7 @@ const login = async (req, res) => {
       secure: true,
       sameSite: 'none', // May require additional server configuration for cross-site requests
     });
+    req.flash('message','Log In Completed');
     res.redirect('/jobs/single');
    
   } catch (error) {
@@ -283,13 +203,7 @@ const logout = async(req,res)=>{
   module.exports = {
     index,
 
-    showUsers,
-    createaccount,
-    createUser,
-    updateUser,
-    updateView,
-    singleUser,
-    deleteUser,
+    
 
     jobs,
     postajob,
@@ -299,6 +213,7 @@ const logout = async(req,res)=>{
     deleteJob,
 
     applies,
+    appliedJobs,
 
     login,
     signin,

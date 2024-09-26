@@ -1,7 +1,6 @@
 const express = require("express");
-const {showUsers,createaccount, createUser, updateUser,updateView,singleUser, deleteUser,
-        jobs,postajob, createJob,singleJob,updateJob,deleteJob,
-        applies,
+const { jobs,postajob, createJob,singleJob,updateJob,deleteJob,
+        applies,appliedJobs,
         login,signin,logout,
         index
  } = require('../controllers/jobs.controller.js');
@@ -18,14 +17,14 @@ router.get("/", index);
 
 //User Routes
 
-router.get('/users', showUsers);
+// router.get('/users', showUsers);
 
-router.get('/createaccount',islogout,createaccount);
-router.post('/register', createUser);
-router.post('/updateuser/', authenticateToken,updateUser);
-router.get('/update/',authenticateToken, updateView);
-router.get('/single/',authenticateToken, singleUser);
-router.delete('/delete/:id',authenticateToken, deleteUser);
+// router.get('/createaccount',islogout,createaccount);
+// router.post('/register', createUser);
+// router.post('/updateuser/', authenticateToken,updateUser);
+// router.get('/update/',authenticateToken, updateView);
+// router.get('/single/',authenticateToken, singleUser);
+// router.delete('/delete/:id',authenticateToken, deleteUser);
 
 // Job Route
 router.get('/jobs', jobs);
@@ -38,6 +37,7 @@ router.get('/singlejob/:id', singleJob);
 //Application Route
 
 router.post('/applications/:id',authenticateToken,applies);
+router.get('/appliedJobs',authenticateToken,appliedJobs);
 
 //Login Route
 
