@@ -23,16 +23,15 @@ const index =async (req,res)=>{
   res.render('createjob',{req});
 }
 
-    const jobs = async (req , res ) =>{
-                  try {
-
-                    const jobs = await Job.find({})
-                    res.render('jobs', { jobs: jobs,req });
-                } catch (error) {
-                    res.status(500).json({message: error.message})
-                }
-            };
-
+const jobs = async (req, res) => {
+  try {
+      const jobsList = await Job.find({});
+      const message = req.flash('message');
+      res.render('jobs', { jobs: jobsList,req, message });
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
     const createJob = async (req,res)=>{
 
                   try {

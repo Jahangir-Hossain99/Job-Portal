@@ -23,29 +23,26 @@ const  createaccount =(req,res)=>{
           }
     };
   
-  const createUser =  async (req,res)=>{
-  
+    const createUser = async (req, res) => {
       try {
-        const { name, email, password } = req.body;
-        const exists = await User.findOne({email:email});
-        if (exists) {
-          res.status(400).send("User exists");
-          return null;
-        }else{
-          const hashedPassword = await bcrypt.hash(password, 10);
-    
-        const user = new User({ name, email, password: hashedPassword });
-    
-        await user.save();
-        res.redirect("/jobs/jobs");   
-        return null;
-        }
-                  
-      } catch (error) {
-          res.status(500).json({message: error.message})
-      }
+          const { name, email, password } = req.body;
+          const exists = await User.findOne({ email: email });
+          if (exists) {
+              return res.status(400).send("User exists");
+          }
   
-    };
+          const hashedPassword = await bcrypt.hash(password, 10);
+          const user = new User({ name, email, password: hashedPassword });
+          await user.save();
+
+          const jobsList = await Job.find({});
+          req.flash('message','User has been created');
+          res.render('jobs', { jobs: jobsList,req, message:req.flash('message') });
+          
+      } catch (error) {
+          return res.status(500).json({ message: error.message });
+      }
+  };
   
     const updateView = async(req,res)=>{
       try {

@@ -88,6 +88,21 @@
                         }, 3000); // Hide after 3 seconds
                     }
                 };
+
+    document.addEventListener('DOMContentLoaded',()=>{
+        const UserType = document.getElementById('userType');                
+        const photoLabel = document.getElementById('photoLabel'); 
+
+        UserType.addEventListener('input', function () {
+            
+            if (this.value === 'employee') {
+                photoLabel.textContent = "Please upload User's photo:";
+            } else if (this.value === 'employer') {
+                photoLabel.textContent = "Please upload Company's Logo:";
+            }
+        }); 
+    });
+    
 </script>
 </body>
 

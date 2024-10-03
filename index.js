@@ -7,10 +7,11 @@ const UserRoute = require('./routes/user.route');
 const app = express();
 const flash = require('connect-flash');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 
 app.set("view engine","ejs");
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: false  }));
 app.use(express.json());
 app.use(cookieParser());
@@ -18,9 +19,14 @@ app.use(session({
  secret:'secret',
  cookie:{maxAge:3000},
  resave:false,
- saveUninitialized:false
+ saveUninitialized:false,
+ store: MongoStore.create({ mongoUrl: 'mongodb+srv://JOBS:JOBS@jobs.ftrll5b.mongodb.net/Jobs?retryWrites=true&w=majority&appName=Jobs' })
 }));
 app.use(flash());
+app.use((req, res, next) => {
+  res.locals.flashMessages = req.flash('message');
+  next();
+});
 
 app.use("/jobs", JobRoute);
 app.use("/jobs", UserRoute);

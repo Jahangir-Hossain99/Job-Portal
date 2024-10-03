@@ -16,7 +16,18 @@ const UserSchema = mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    
+    role: {
+            type: String,
+            enum: ['Employee', 'Employeer'],
+            required: true,
+    },
+    photo: {
+        type: String, // This will store the path or URL of the photo
+        required: true // If you want the photo to be mandatory
     }
+    
 });
 
 const JobSchema = mongoose.Schema({
